@@ -9,6 +9,7 @@ In the modern world, Ethon is a very basic libcurl wrapper using ffi.
 * [Documentation](http://rubydoc.info/github/typhoeus/ethon/frames/Ethon)
 * [Website](http://typhoeus.github.com/)
 * [Mailing list](http://groups.google.com/group/typhoeus)
+* [Deprecations and migration notes](DEPRECATIONS.md)
 
 ## Installation
 
