@@ -15,14 +15,9 @@ jobs:
           - truffleruby-head
     steps:
       - uses: actions/checkout@v3
-      - name: Install libcurl header
-        run: |
-          if ${{ matrix.os == 'macos' }}
-          then
-            brew install curl
-          else
-            sudo apt update && sudo apt install -y --no-install-recommends libcurl4-openssl-dev
-          fi
+      - name: Install libcurl header (Linux only)
+        if: matrix.os == 'ubuntu'
+        run: sudo apt update && sudo apt install -y --no-install-recommends libcurl4-openssl-dev
       - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
