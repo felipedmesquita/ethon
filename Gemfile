@@ -13,6 +13,9 @@ group :development, :test do
 
   gem "sinatra"
 
+  # Rack 3 extracted handlers/CLI into rackup; needed for rack/handler/webrick in specs
+  gem "rackup"
+
   if Gem.ruby_version < Gem::Version.new("2.0.0")
     gem "json", "< 2"
   else

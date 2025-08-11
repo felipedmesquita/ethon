@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 require 'rack'
-require 'rack/handler/webrick'
+begin
+  require 'rack/handler/webrick'
+rescue LoadError
+  require 'rackup/handler/webrick'
+  module Rack
+    Handler = Rackup::Handler
+  end
+end
 require 'net/http'
 
 # The code for this is inspired by Capybara's server:
