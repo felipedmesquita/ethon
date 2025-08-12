@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, macos-13]
+        os: [ubuntu, macos, macos-14]
         ruby-version: ['3.4']
     steps:
       - uses: actions/checkout@v3
