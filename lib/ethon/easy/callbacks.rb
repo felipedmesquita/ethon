@@ -54,8 +54,8 @@ module Ethon
         @header_write_callback ||= proc {|stream, size, num, object|
           header_data = stream.read_string(size * num)
           @response_headers << header_data
-          
-          if header_data.include?("\r\n\r\n") || header_data == "\r\n"
+
+          if @response_headers.include?("\r\n\r\n")
             result = headers
             result != :abort ? size * num : -1
           else

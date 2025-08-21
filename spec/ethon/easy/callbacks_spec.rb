@@ -72,9 +72,10 @@ describe Ethon::Easy::Callbacks do
         easy.on_headers { :abort }
       end
       let(:header_write_callback) { easy.instance_variable_get(:@header_write_callback) }
+      let(:stream) { double(:read_string => "\r\n\r\n") } # libcurl sends termination sequence
 
       it "returns -1 to indicate abort to libcurl" do
-        expect(header_write_callback.call(stream, 1, 1, nil)).to eq(-1)
+        expect(header_write_callback.call(stream, 4, 1, nil)).to eq(-1)
       end
     end
   end
