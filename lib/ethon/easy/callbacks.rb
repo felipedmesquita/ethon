@@ -52,9 +52,15 @@ module Ethon
       # @return [ Proc ] The callback.
       def header_write_callback
         @header_write_callback ||= proc {|stream, size, num, object|
-          result = headers
-          @response_headers << stream.read_string(size * num)
-          result != :abort ? size * num : -1
+          header_data = stream.read_string(size * num)
+          @response_headers << header_data
+          
+          if header_data.include?("\r\n\r\n") || header_data == "\r\n"
+            result = headers
+            result != :abort ? size * num : -1
+          else
+            size * num
+          end
         }
       end
 
