@@ -1,4 +1,4 @@
-name: Alternative runtime callback probe
+name: Alternative runtime configuration probe
 
 on:
   push:
@@ -6,30 +6,37 @@ on:
 
 jobs:
   probe:
-    name: ${{ matrix.ruby-version }} (${{ matrix.os }}, ${{ matrix.variant }})
-    runs-on: ${{ matrix.os }}-latest
+    name: ${{ matrix.ruby-version }} (${{ matrix.variant }})
+    runs-on: ubuntu-latest
     continue-on-error: true
     env:
       BUNDLE_WITHOUT: perf
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos]
-        ruby-version: [head, debug, truffleruby]
-        variant: [control, retain-callbacks]
+        include:
+          - ruby-version: head
+            variant: control
+          - ruby-version: debug
+            variant: control
+          - ruby-version: truffleruby
+            variant: control
+          - ruby-version: truffleruby
+            variant: retain-callbacks
+          - ruby-version: truffleruby-head
+            variant: control
+          - ruby-version: truffleruby+graalvm
+            variant: control
+          - ruby-version: truffleruby+graalvm-head
+            variant: control
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - name: Install libcurl header
         run: |
-          if ${{ matrix.os == 'macos' }}
-          then
-            brew install curl
-          else
-            sudo apt update
-            sudo apt install -y --no-install-recommends libcurl4-openssl-dev
-          fi
+          sudo apt update
+          sudo apt install -y --no-install-recommends libcurl4-openssl-dev
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -37,7 +44,7 @@ jobs:
           bundler-cache: true
       - name: Restore the unpatched control
         if: matrix.variant == 'control'
-        run: git checkout HEAD^ -- lib/ethon/multi/options.rb
+        run: git checkout 160b56a -- lib/ethon/multi/options.rb
       - name: Record runtime versions
         run: |
           ruby --version
