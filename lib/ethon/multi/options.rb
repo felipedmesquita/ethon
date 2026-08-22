@@ -64,7 +64,7 @@ module Ethon
       # @return [ void ]
       def socketfunction=(value)
         code = Curl.set_option(:socketfunction, value_for(value, :string), handle, :multi)
-        @socketfunction = value
+        @socketfunction = value if code == :ok
         code
       end
 
@@ -90,7 +90,7 @@ module Ethon
       # @return [ void ]
       def timerfunction=(value)
         code = Curl.set_option(:timerfunction, value_for(value, :string), handle, :multi)
-        @timerfunction = value
+        @timerfunction = value if code == :ok
         code
       end
 
