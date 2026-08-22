@@ -1,0 +1,52 @@
+name: Alternative runtime callback probe
+
+on:
+  push:
+    branches: [lab/alternative-runtime-callback-retention]
+
+jobs:
+  probe:
+    name: ${{ matrix.ruby-version }} (${{ matrix.os }}, ${{ matrix.variant }})
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: true
+    env:
+      BUNDLE_WITHOUT: perf
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos]
+        ruby-version: [head, debug, truffleruby]
+        variant: [control, retain-callbacks]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install libcurl header
+        run: |
+          if ${{ matrix.os == 'macos' }}
+          then
+            brew install curl
+          else
+            sudo apt update
+            sudo apt install -y --no-install-recommends libcurl4-openssl-dev
+          fi
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: Restore the unpatched control
+        if: matrix.variant == 'control'
+        run: git checkout HEAD^ -- lib/ethon/multi/options.rb
+      - name: Record runtime versions
+        run: |
+          ruby --version
+          bundle exec ruby -e 'require "ffi"; puts "ffi #{FFI::VERSION}"'
+          curl --version
+      - name: Repeat socket-action integration specs
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8 9 10
+          do
+            echo "socket-action attempt ${attempt}"
+            bundle exec rspec spec/ethon/multi_spec.rb
+          done
+      - name: Run full suite
+        run: bundle exec rake
