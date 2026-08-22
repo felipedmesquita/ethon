@@ -19,7 +19,7 @@ jobs:
             variant: retain-callbacks
           - ruby-version: truffleruby-head
             variant: control
-          - ruby-version: truffleruby-33.1.0
+          - ruby-version: truffleruby-33.0.1
             variant: control
           - ruby-version: truffleruby+graalvm-head
             variant: control
